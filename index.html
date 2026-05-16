@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -11,578 +10,576 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700&display=swap');
 
-:root {
-–bg: #0a0e1a;
-–card: #111827;
-–border: #1e293b;
-–accent: #f97316;
-–accent2: #fb923c;
-–green: #22c55e;
-–red: #ef4444;
-–text: #f1f5f9;
-–muted: #64748b;
-–taken: #1e293b;
-}
-
-- { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-background: #0a0e1a;
-color: #f1f5f9;
-font-family: ‘Noto Sans KR’, sans-serif;
-min-height: 100vh;
-overflow-x: hidden;
-}
-
-/* 배경 그리드 효과 */
-body::before {
-content: ‘’;
-position: fixed;
-inset: 0;
-background-image:
-linear-gradient(rgba(249,115,22,0.03) 1px, transparent 1px),
-linear-gradient(90deg, rgba(249,115,22,0.03) 1px, transparent 1px);
-background-size: 40px 40px;
-pointer-events: none;
-z-index: 0;
-}
-
-.container {
-position: relative;
-z-index: 1;
-max-width: 480px;
-margin: 0 auto;
-padding: 20px 16px 40px;
-}
-
-/* 헤더 */
-.header {
-text-align: center;
-margin-bottom: 24px;
-}
-
-.header .badge {
-display: inline-block;
-background: var(–accent);
-color: white;
-font-size: 11px;
-font-weight: 700;
-padding: 4px 12px;
-border-radius: 20px;
-letter-spacing: 2px;
-margin-bottom: 8px;
-animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-0%, 100% { opacity: 1; }
-50% { opacity: 0.7; }
-}
-
-.header h1 {
-font-family: ‘Black Han Sans’, sans-serif;
-font-size: 28px;
-letter-spacing: -1px;
-line-height: 1.1;
-color: var(–text);
-}
-
-.header h1 span {
-color: var(–accent);
-}
-
-.seat-count {
-margin-top: 8px;
-font-size: 13px;
-color: var(–muted);
-}
-
-.seat-count strong {
-color: var(–green);
-}
-
-/* 이름 입력 화면 */
-#nameScreen {
-display: flex;
-flex-direction: column;
-gap: 16px;
-}
-
-.name-card {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 16px;
-padding: 24px;
-}
-
-.name-card label {
-display: block;
-font-size: 13px;
-color: var(–muted);
-margin-bottom: 10px;
-letter-spacing: 1px;
-text-transform: uppercase;
-}
-
-.name-card input {
-width: 100%;
-background: var(–bg);
-border: 2px solid var(–border);
-border-radius: 10px;
-color: var(–text);
-font-size: 20px;
-font-family: ‘Noto Sans KR’, sans-serif;
-padding: 14px 16px;
-outline: none;
-transition: border-color 0.2s;
-}
-
-.name-card input:focus {
-border-color: var(–accent);
-}
-
-.name-card input::placeholder {
-color: var(–muted);
-font-size: 16px;
-}
-
-.btn-start {
-background: var(–accent);
-color: white;
-border: none;
-border-radius: 12px;
-padding: 18px;
-font-size: 18px;
-font-family: ‘Black Han Sans’, sans-serif;
-letter-spacing: 1px;
-cursor: pointer;
-transition: transform 0.1s, background 0.2s;
-width: 100%;
-}
-
-.btn-start:hover { background: var(–accent2); }
-.btn-start:active { transform: scale(0.97); }
-
-/* 자리 선택 화면 */
-#seatScreen { display: none; }
-
-.my-name-bar {
-background: linear-gradient(135deg, var(–accent), #ea580c);
-border-radius: 12px;
-padding: 12px 16px;
-margin-bottom: 20px;
-display: flex;
-align-items: center;
-gap: 10px;
-}
-
-.my-name-bar .emoji { font-size: 20px; }
-.my-name-bar .text { font-size: 15px; }
-.my-name-bar .text strong { font-size: 18px; }
-
-/* 범례 */
-.legend {
-display: flex;
-gap: 16px;
-margin-bottom: 20px;
-padding: 12px 16px;
-background: var(–card);
-border-radius: 10px;
-border: 1px solid var(–border);
-}
-
-.legend-item {
-display: flex;
-align-items: center;
-gap: 6px;
-font-size: 12px;
-color: var(–muted);
-}
-
-.legend-dot {
-width: 12px;
-height: 12px;
-border-radius: 3px;
-}
-
-/* 교탁 */
-.blackboard {
-background: #1a3a2a;
-border: 2px solid #2d6a4f;
-border-radius: 8px;
-text-align: center;
-padding: 10px;
-margin-bottom: 12px;
-font-size: 13px;
-color: #74c69d;
-letter-spacing: 3px;
-font-weight: 700;
-}
-
-.teacher-desk {
-background: #2d1b00;
-border: 2px solid #92400e;
-border-radius: 8px;
-text-align: center;
-padding: 8px;
-margin-bottom: 20px;
-font-size: 12px;
-color: #d97706;
-letter-spacing: 2px;
-}
-
-/* 자리 배치 */
-.classroom {
-display: flex;
-flex-direction: column;
-gap: 6px;
-margin-bottom: 24px;
-}
-
-/* 앞자리 (1번) */
-.front-seat-row {
-display: flex;
-justify-content: center;
-margin-bottom: 8px;
-}
-
-/* 분단 구조 */
-.rows-area {
-display: flex;
-gap: 8px;
-justify-content: center;
-}
-
-.dan {
-display: flex;
-flex-direction: column;
-gap: 6px;
-}
-
-.dan-label {
-text-align: center;
-font-size: 10px;
-color: var(–muted);
-letter-spacing: 1px;
-margin-bottom: 2px;
-}
-
-.seat-pair {
-display: flex;
-gap: 4px;
-}
-
-/* 자리 버튼 */
-.seat {
-width: 52px;
-height: 52px;
-border-radius: 10px;
-border: 2px solid var(–border);
-background: var(–card);
-color: var(–text);
-font-size: 11px;
-font-family: ‘Noto Sans KR’, sans-serif;
-cursor: pointer;
-transition: all 0.15s;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 2px;
-position: relative;
-overflow: hidden;
-}
-
-.seat .seat-num {
-font-size: 16px;
-font-family: ‘Black Han Sans’, sans-serif;
-color: var(–accent);
-line-height: 1;
-}
-
-.seat .seat-name {
-font-size: 9px;
-color: var(–muted);
-max-width: 48px;
-overflow: hidden;
-text-overflow: ellipsis;
-white-space: nowrap;
-}
-
-.seat.available:hover {
-border-color: var(–accent);
-background: rgba(249,115,22,0.15);
-transform: scale(1.05);
-}
-
-.seat.available:hover .seat-num {
-color: var(–accent2);
-}
-
-.seat.taken {
-background: var(–taken);
-border-color: #2d3748;
-cursor: not-allowed;
-opacity: 0.6;
-}
-
-.seat.taken .seat-num {
-color: var(–muted);
-font-size: 12px;
-}
-
-.seat.mine {
-background: linear-gradient(135deg, rgba(249,115,22,0.3), rgba(234,88,12,0.2));
-border-color: var(–accent);
-cursor: default;
-}
-
-.seat.mine .seat-num {
-color: var(–accent);
-}
-
-/* 앞자리 (특별 자리) */
-.seat.front-seat {
-width: 60px;
-height: 52px;
-border-color: #d97706;
-background: rgba(217,119,6,0.1);
-}
-
-.seat.front-seat .seat-num {
-color: #fbbf24;
-}
-
-/* 확인 팝업 */
-.overlay {
-display: none;
-position: fixed;
-inset: 0;
-background: rgba(0,0,0,0.8);
-z-index: 100;
-align-items: center;
-justify-content: center;
-padding: 20px;
-}
-
-.overlay.show { display: flex; }
-
-.popup {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 20px;
-padding: 28px 24px;
-width: 100%;
-max-width: 320px;
-text-align: center;
-animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes popIn {
-from { transform: scale(0.8); opacity: 0; }
-to { transform: scale(1); opacity: 1; }
-}
-
-.popup .emoji-big { font-size: 48px; margin-bottom: 12px; }
-.popup h2 { font-family: ‘Black Han Sans’, sans-serif; font-size: 22px; margin-bottom: 8px; }
-.popup p { color: var(–muted); font-size: 14px; margin-bottom: 20px; line-height: 1.6; }
-.popup .seat-preview {
-background: var(–bg);
-border: 2px solid var(–accent);
-border-radius: 12px;
-padding: 16px;
-margin-bottom: 20px;
-font-size: 32px;
-font-family: ‘Black Han Sans’, sans-serif;
-color: var(–accent);
-}
-
-.popup-btns {
-display: flex;
-gap: 10px;
-}
-
-.btn-cancel {
-flex: 1;
-background: var(–border);
-color: var(–muted);
-border: none;
-border-radius: 10px;
-padding: 14px;
-font-size: 15px;
-font-family: ‘Noto Sans KR’, sans-serif;
-cursor: pointer;
-}
-
-.btn-confirm {
-flex: 2;
-background: var(–accent);
-color: white;
-border: none;
-border-radius: 10px;
-padding: 14px;
-font-size: 15px;
-font-family: ‘Black Han Sans’, sans-serif;
-cursor: pointer;
-letter-spacing: 1px;
-}
-
-/* 완료 화면 */
-#doneScreen {
-display: none;
-text-align: center;
-padding: 40px 20px;
-}
-
-#doneScreen .big-emoji { font-size: 80px; margin-bottom: 16px; }
-#doneScreen h2 {
-font-family: ‘Black Han Sans’, sans-serif;
-font-size: 32px;
-color: var(–accent);
-margin-bottom: 8px;
-}
-#doneScreen p { color: var(–muted); font-size: 16px; line-height: 1.7; }
-.btn-change {
-margin-top: 16px;
-background: transparent;
-border: 2px solid var(–border);
-color: var(–muted);
-border-radius: 12px;
-padding: 14px 28px;
-font-size: 15px;
-font-family: ‘Noto Sans KR’, sans-serif;
-cursor: pointer;
-transition: border-color 0.2s, color 0.2s;
-}
-.btn-change:hover { border-color: var(–accent); color: var(–accent); }
-#doneScreen .seat-big {
-background: var(–card);
-border: 3px solid var(–accent);
-border-radius: 20px;
-padding: 24px;
-margin: 24px 0;
-font-size: 48px;
-font-family: ‘Black Han Sans’, sans-serif;
-color: var(–accent);
-}
-
-/* 관리자 버튼 */
-.admin-bar {
-position: fixed;
-bottom: 20px;
-right: 16px;
-z-index: 50;
-}
-
-.btn-admin {
-background: var(–card);
-border: 1px solid var(–border);
-color: var(–muted);
-border-radius: 10px;
-padding: 8px 14px;
-font-size: 12px;
-cursor: pointer;
-}
-
-/* 관리자 팝업 */
-#adminPopup {
-display: none;
-position: fixed;
-inset: 0;
-background: rgba(0,0,0,0.9);
-z-index: 200;
-align-items: center;
-justify-content: center;
-padding: 20px;
-}
-#adminPopup.show { display: flex; }
-
-.admin-card {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 20px;
-padding: 24px;
-width: 100%;
-max-width: 360px;
-}
-
-.admin-card h3 {
-font-family: ‘Black Han Sans’, sans-serif;
-font-size: 20px;
-margin-bottom: 16px;
-color: var(–accent);
-}
-
-.seat-list {
-display: flex;
-flex-direction: column;
-gap: 6px;
-max-height: 300px;
-overflow-y: auto;
-margin-bottom: 16px;
-}
-
-.seat-list-item {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 8px 12px;
-background: var(–bg);
-border-radius: 8px;
-font-size: 13px;
-}
-
-.seat-list-item .num { color: var(–accent); font-weight: 700; }
-.seat-list-item .name { color: var(–text); }
-.seat-list-item .empty { color: var(–muted); }
-
-.btn-start-game {
-width: 100%;
-background: var(–accent);
-color: white;
-border: none;
-border-radius: 10px;
-padding: 14px;
-font-size: 16px;
-font-family: ‘Black Han Sans’, sans-serif;
-letter-spacing: 1px;
-cursor: pointer;
-margin-bottom: 8px;
-}
-.btn-reset {
-width: 100%;
-background: var(–red);
-color: white;
-border: none;
-border-radius: 10px;
-padding: 12px;
-font-size: 14px;
-font-family: ‘Noto Sans KR’, sans-serif;
-font-weight: 700;
-cursor: pointer;
-margin-bottom: 8px;
-}
-
-.btn-close-admin {
-width: 100%;
-background: var(–border);
-color: var(–muted);
-border: none;
-border-radius: 10px;
-padding: 12px;
-font-size: 14px;
-font-family: ‘Noto Sans KR’, sans-serif;
-cursor: pointer;
-}
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --border: #1e293b;
+    --accent: #f97316;
+    --accent2: #fb923c;
+    --green: #22c55e;
+    --red: #ef4444;
+    --text: #f1f5f9;
+    --muted: #64748b;
+    --taken: #1e293b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0a0e1a;
+    color: #f1f5f9;
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* 배경 그리드 효과 */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(249,115,22,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(249,115,22,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+
+  /* 헤더 */
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .header .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .header h1 {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 28px;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  .header h1 span {
+    color: var(--accent);
+  }
+
+  .seat-count {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .seat-count strong {
+    color: var(--green);
+  }
+
+  /* 이름 입력 화면 */
+  #nameScreen {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .name-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .name-card label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .name-card input {
+    width: 100%;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .name-card input:focus {
+    border-color: var(--accent);
+  }
+
+  .name-card input::placeholder {
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  .btn-start {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 18px;
+    font-size: 18px;
+    font-family: 'Black Han Sans', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.2s;
+    width: 100%;
+  }
+
+  .btn-start:hover { background: var(--accent2); }
+  .btn-start:active { transform: scale(0.97); }
+
+  /* 자리 선택 화면 */
+  #seatScreen { display: none; }
+
+  .my-name-bar {
+    background: linear-gradient(135deg, var(--accent), #ea580c);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .my-name-bar .emoji { font-size: 20px; }
+  .my-name-bar .text { font-size: 15px; }
+  .my-name-bar .text strong { font-size: 18px; }
+
+  /* 범례 */
+  .legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* 교탁 */
+  .blackboard {
+    background: #1a3a2a;
+    border: 2px solid #2d6a4f;
+    border-radius: 8px;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #74c69d;
+    letter-spacing: 3px;
+    font-weight: 700;
+  }
+
+  .teacher-desk {
+    background: #2d1b00;
+    border: 2px solid #92400e;
+    border-radius: 8px;
+    text-align: center;
+    padding: 8px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: #d97706;
+    letter-spacing: 2px;
+  }
+
+  /* 자리 배치 */
+  .classroom {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+
+  /* 앞자리 (1번) */
+  .front-seat-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  /* 분단 구조 */
+  .rows-area {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .dan {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .dan-label {
+    text-align: center;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+
+  .seat-pair {
+    display: flex;
+    gap: 4px;
+  }
+
+  /* 자리 버튼 */
+  .seat {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 11px;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .seat .seat-num {
+    font-size: 16px;
+    font-family: 'Black Han Sans', sans-serif;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .seat .seat-name {
+    font-size: 9px;
+    color: var(--muted);
+    max-width: 48px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .seat.available:hover {
+    border-color: var(--accent);
+    background: rgba(249,115,22,0.15);
+    transform: scale(1.05);
+  }
+
+  .seat.available:hover .seat-num {
+    color: var(--accent2);
+  }
+
+  .seat.taken {
+    background: var(--taken);
+    border-color: #2d3748;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .seat.taken .seat-num {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .seat.mine {
+    background: linear-gradient(135deg, rgba(249,115,22,0.3), rgba(234,88,12,0.2));
+    border-color: var(--accent);
+    cursor: default;
+  }
+
+  .seat.mine .seat-num {
+    color: var(--accent);
+  }
+
+  /* 앞자리 (특별 자리) */
+  .seat.front-seat {
+    width: 60px;
+    height: 52px;
+    border-color: #d97706;
+    background: rgba(217,119,6,0.1);
+  }
+
+  .seat.front-seat .seat-num {
+    color: #fbbf24;
+  }
+
+  /* 확인 팝업 */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .overlay.show { display: flex; }
+
+  .popup {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .popup .emoji-big { font-size: 48px; margin-bottom: 12px; }
+  .popup h2 { font-family: 'Black Han Sans', sans-serif; font-size: 22px; margin-bottom: 8px; }
+  .popup p { color: var(--muted); font-size: 14px; margin-bottom: 20px; line-height: 1.6; }
+  .popup .seat-preview {
+    background: var(--bg);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    font-size: 32px;
+    font-family: 'Black Han Sans', sans-serif;
+    color: var(--accent);
+  }
+
+  .popup-btns {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-cancel {
+    flex: 1;
+    background: var(--border);
+    color: var(--muted);
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+  }
+
+  .btn-confirm {
+    flex: 2;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-family: 'Black Han Sans', sans-serif;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+
+  /* 완료 화면 */
+  #doneScreen {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  #doneScreen .big-emoji { font-size: 80px; margin-bottom: 16px; }
+  #doneScreen h2 {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 32px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  #doneScreen p { color: var(--muted); font-size: 16px; line-height: 1.7; }
+  .btn-change {
+    margin-top: 16px;
+    background: transparent;
+    border: 2px solid var(--border);
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-size: 15px;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-change:hover { border-color: var(--accent); color: var(--accent); }
+  #doneScreen .seat-big {
+    background: var(--card);
+    border: 3px solid var(--accent);
+    border-radius: 20px;
+    padding: 24px;
+    margin: 24px 0;
+    font-size: 48px;
+    font-family: 'Black Han Sans', sans-serif;
+    color: var(--accent);
+  }
+
+  /* 관리자 버튼 */
+  .admin-bar {
+    position: fixed;
+    bottom: 20px;
+    right: 16px;
+    z-index: 50;
+  }
+
+  .btn-admin {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* 관리자 팝업 */
+  #adminPopup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #adminPopup.show { display: flex; }
+
+  .admin-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .admin-card h3 {
+    font-family: 'Black Han Sans', sans-serif;
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: var(--accent);
+  }
+
+  .seat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+  }
+
+  .seat-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--bg);
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .seat-list-item .num { color: var(--accent); font-weight: 700; }
+  .seat-list-item .name { color: var(--text); }
+  .seat-list-item .empty { color: var(--muted); }
+
+  .btn-start-game {
+    width: 100%;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 16px;
+    font-family: 'Black Han Sans', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+  .btn-reset {
+    width: 100%;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+
+  .btn-close-admin {
+    width: 100%;
+    background: var(--border);
+    color: var(--muted);
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+  }
 </style>
-
 </head>
 <body style="background:#0a0e1a; color:#f1f5f9;">
 
 <div class="container">
 
   <!-- 헤더 -->
-
   <div class="header">
     <div class="badge">🔴 LIVE</div>
     <h1><span>명당</span>을 차지하라</h1>
@@ -590,7 +587,6 @@ cursor: pointer;
   </div>
 
   <!-- 이름 입력 화면 -->
-
   <div id="nameScreen">
     <div class="name-card">
       <label>내 이름</label>
@@ -599,8 +595,8 @@ cursor: pointer;
     <button class="btn-start" onclick="goToWait()">준비 완료 →</button>
   </div>
 
-  <!-- 대기 화면 -->
 
+  <!-- 대기 화면 -->
   <div id="waitScreen" style="display:none; text-align:center; padding: 40px 20px;">
     <div style="font-size:64px; margin-bottom:16px;">⏳</div>
     <h2 style="font-family:'Black Han Sans',sans-serif; font-size:26px; margin-bottom:10px; color:var(--text);">선생님을 기다리는 중</h2>
@@ -610,49 +606,44 @@ cursor: pointer;
   </div>
 
   <!-- 자리 선택 화면 -->
-
   <div id="seatScreen">
     <div class="my-name-bar">
       <span class="emoji">👤</span>
       <span class="text"><strong id="myNameDisplay"></strong> — 자리를 선택하세요!</span>
     </div>
 
-```
-<div class="legend">
-  <div class="legend-item">
-    <div class="legend-dot" style="background:#1e293b;border:2px solid #334155"></div>
-    <span>선택 가능</span>
-  </div>
-  <div class="legend-item">
-    <div class="legend-dot" style="background:#1e293b;opacity:0.4"></div>
-    <span>선택됨</span>
-  </div>
-  <div class="legend-item">
-    <div class="legend-dot" style="background:rgba(249,115,22,0.3);border:2px solid #f97316"></div>
-    <span>내 자리</span>
-  </div>
-</div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#1e293b;border:2px solid #334155"></div>
+        <span>선택 가능</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#1e293b;opacity:0.4"></div>
+        <span>선택됨</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:rgba(249,115,22,0.3);border:2px solid #f97316"></div>
+        <span>내 자리</span>
+      </div>
+    </div>
 
-<!-- 칠판 & 교탁 -->
-<div class="blackboard">칠 판</div>
-<div class="teacher-desk">교 탁</div>
+    <!-- 칠판 & 교탁 -->
+    <div class="blackboard">칠 판</div>
+    <div class="teacher-desk">교 탁</div>
 
-<!-- 앞 자리 (1번) -->
-<div class="front-seat-row">
-  <button class="seat front-seat" id="seat-1" onclick="selectSeat(1)">
-    <span class="seat-num">1</span>
-    <span class="seat-name" id="name-1"></span>
-  </button>
-</div>
+    <!-- 앞 자리 (1번) -->
+    <div class="front-seat-row">
+      <button class="seat front-seat" id="seat-1" onclick="selectSeat(1)">
+        <span class="seat-num">1</span>
+        <span class="seat-name" id="name-1"></span>
+      </button>
+    </div>
 
-<!-- 분단별 자리 -->
-<div class="rows-area" id="mainSeats"></div>
-```
-
+    <!-- 분단별 자리 -->
+    <div class="rows-area" id="mainSeats"></div>
   </div>
 
   <!-- 완료 화면 -->
-
   <div id="doneScreen">
     <div class="big-emoji">🎉</div>
     <h2>자리 확정!</h2>
@@ -664,7 +655,6 @@ cursor: pointer;
 </div>
 
 <!-- 자리 확인 팝업 -->
-
 <div class="overlay" id="confirmOverlay">
   <div class="popup">
     <div class="emoji-big">🪑</div>
@@ -679,13 +669,11 @@ cursor: pointer;
 </div>
 
 <!-- 관리자 버튼 -->
-
 <div class="admin-bar">
   <button class="btn-admin" onclick="openAdmin()">관리자 👀</button>
 </div>
 
 <!-- 관리자 팝업 -->
-
 <div id="adminPopup">
   <div class="admin-card">
     <h3>🗺️ 현재 자리 현황</h3>
@@ -697,7 +685,6 @@ cursor: pointer;
 </div>
 
 <!-- Firebase SDK -->
-
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -900,9 +887,10 @@ cursor: pointer;
       window.closeConfirm();
       return;
     }
-    await set(ref(db, `seats/${parseInt(selectedSeat)}`), myName);
+    const seatNum = parseInt(selectedSeat);
+    await set(ref(db, `seats/${seatNum}`), myName);
     window.closeConfirm();
-    showDone(selectedSeat);
+    showDone(seatNum);
   }
 
   // ─── 완료 화면 ───────────────────────────────────────────────
@@ -968,6 +956,5 @@ cursor: pointer;
     location.reload();
   }
 </script>
-
 </body>
 </html>
