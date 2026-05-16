@@ -1029,13 +1029,26 @@
   window.confirmSeat = async function() {
     if (!selectedSeat || isNaN(selectedSeat)) return;
     const seatNum = parseInt(selectedSeat);
+ 
+    // 확인 팝업 먼저 닫기
+    window.closeConfirm();
+ 
+    // 최신 데이터 다시 읽기
+    const { get } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+    const snap = await get(ref(db, `seats/${seatNum}`));
+    if (snap.val() !== null) {
+      alert('방금 다른 사람이 선택했어요! 다른 자리를 골라주세요.');
+      updateUI();
+      return;
+    }
+ 
+    // 트랜잭션으로 원자적 저장
     const seatRef = ref(db, `seats/${seatNum}`);
     try {
       const result = await runTransaction(seatRef, (current) => {
-        if (current !== null) return; // 이미 선택됨 → 트랜잭션 취소
+        if (current !== null) return undefined; // abort
         return myName;
       });
-      window.closeConfirm();
       if (result.committed) {
         showDone(seatNum);
       } else {
@@ -1044,7 +1057,6 @@
       }
     } catch(e) {
       alert('오류가 발생했어요. 다시 시도해주세요.');
-      window.closeConfirm();
     }
   }
  
