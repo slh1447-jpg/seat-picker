@@ -832,7 +832,7 @@
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, set, onValue, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
  
   const firebaseConfig = {
     apiKey: "AIzaSyAC-NdaHFqmjd0O8gaPYx0t0CXmrxb7fIA",
@@ -1028,15 +1028,24 @@
  
   window.confirmSeat = async function() {
     if (!selectedSeat || isNaN(selectedSeat)) return;
-    if (seats[selectedSeat]) {
-      alert('누군가 방금 선택했어요! 다른 자리를 골라주세요.');
-      window.closeConfirm();
-      return;
-    }
     const seatNum = parseInt(selectedSeat);
-    await set(ref(db, `seats/${seatNum}`), myName);
-    window.closeConfirm();
-    showDone(seatNum);
+    const seatRef = ref(db, `seats/${seatNum}`);
+    try {
+      const result = await runTransaction(seatRef, (current) => {
+        if (current !== null) return; // 이미 선택됨 → 트랜잭션 취소
+        return myName;
+      });
+      window.closeConfirm();
+      if (result.committed) {
+        showDone(seatNum);
+      } else {
+        alert('방금 다른 사람이 선택했어요! 다른 자리를 골라주세요.');
+        updateUI();
+      }
+    } catch(e) {
+      alert('오류가 발생했어요. 다시 시도해주세요.');
+      window.closeConfirm();
+    }
   }
  
   // ─── 완료 화면 ───────────────────────────────────────────────
