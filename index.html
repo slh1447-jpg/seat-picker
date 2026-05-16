@@ -860,6 +860,7 @@
     seats = snapshot.val() || {};
     updateUI();
     if (document.getElementById('adminScreen').style.display === 'block') buildAdminSeats();
+    if (document.getElementById('mapOverlay').classList.contains('show')) updateMap();
   });
  
   // 게임 상태 구독
@@ -1092,7 +1093,7 @@
   }
  
   // ─── 전체 현황 ──────────────────────────────────────────────────
-  window.openMap = function() {
+  function updateMap() {
     // 앞자리
     const front = document.getElementById('mapFront');
     front.innerHTML = '';
@@ -1129,7 +1130,10 @@
       });
       rows.appendChild(danEl);
     });
+  }
  
+  window.openMap = function() {
+    updateMap();
     document.getElementById('mapOverlay').classList.add('show');
   }
  
