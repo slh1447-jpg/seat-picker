@@ -803,7 +803,7 @@ cursor: pointer;
   // ─── UI 업데이트 ─────────────────────────────────────────────
   function updateUI() {
     // 남은 자리는 seats 객체 기준으로 직접 계산
-    const takenCount = Object.keys(seats).filter(k => seats[k]).length;
+    const takenCount = Object.keys(seats).filter(k => !isNaN(k) && seats[k]).length;
     const remain = 25 - takenCount;
     document.getElementById('remainCount').textContent = remain;
 
@@ -935,6 +935,8 @@ cursor: pointer;
 
   // ─── 관리자 ──────────────────────────────────────────────────
   window.openAdmin = function() {
+    const pw = prompt('관리자 비밀번호를 입력하세요');
+    if (pw !== '9493') { alert('비밀번호가 틀렸습니다!'); return; }
     const list = document.getElementById('adminSeatList');
     list.innerHTML = '';
     for (let i = 1; i <= 25; i++) {
