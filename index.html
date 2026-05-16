@@ -1,954 +1,968 @@
-<!DOCTYPE html>  
-<html lang="ko">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
-<title>명당을 차지하라</title>  
-<style>  
-  @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700&display=swap');  
-  
-  :root {  
-    --bg: #0a0e1a;  
-    --card: #111827;  
-    --border: #1e293b;  
-    --accent: #f97316;  
-    --accent2: #fb923c;  
-    --green: #22c55e;  
-    --red: #ef4444;  
-    --text: #f1f5f9;  
-    --muted: #64748b;  
-    --taken: #1e293b;  
-  }  
-  
-  * { box-sizing: border-box; margin: 0; padding: 0; }  
-  
-  body {  
-    background: var(--bg);  
-    color: var(--text);  
-    font-family: 'Noto Sans KR', sans-serif;  
-    min-height: 100vh;  
-    overflow-x: hidden;  
-  }  
-  
-  /* 배경 그리드 효과 */  
-  body::before {  
-    content: '';  
-    position: fixed;  
-    inset: 0;  
-    background-image:   
-      linear-gradient(rgba(249,115,22,0.03) 1px, transparent 1px),  
-      linear-gradient(90deg, rgba(249,115,22,0.03) 1px, transparent 1px);  
-    background-size: 40px 40px;  
-    pointer-events: none;  
-    z-index: 0;  
-  }  
-  
-  .container {  
-    position: relative;  
-    z-index: 1;  
-    max-width: 480px;  
-    margin: 0 auto;  
-    padding: 20px 16px 40px;  
-  }  
-  
-  /* 헤더 */  
-  .header {  
-    text-align: center;  
-    margin-bottom: 24px;  
-  }  
-  
-  .header .badge {  
-    display: inline-block;  
-    background: var(--accent);  
-    color: white;  
-    font-size: 11px;  
-    font-weight: 700;  
-    padding: 4px 12px;  
-    border-radius: 20px;  
-    letter-spacing: 2px;  
-    margin-bottom: 8px;  
-    animation: pulse 2s infinite;  
-  }  
-  
-  @keyframes pulse {  
-    0%, 100% { opacity: 1; }  
-    50% { opacity: 0.7; }  
-  }  
-  
-  .header h1 {  
-    font-family: 'Black Han Sans', sans-serif;  
-    font-size: 28px;  
-    letter-spacing: -1px;  
-    line-height: 1.1;  
-    color: var(--text);  
-  }  
-  
-  .header h1 span {  
-    color: var(--accent);  
-  }  
-  
-  .seat-count {  
-    margin-top: 8px;  
-    font-size: 13px;  
-    color: var(--muted);  
-  }  
-  
-  .seat-count strong {  
-    color: var(--green);  
-  }  
-  
-  /* 이름 입력 화면 */  
-  #nameScreen {  
-    display: flex;  
-    flex-direction: column;  
-    gap: 16px;  
-  }  
-  
-  .name-card {  
-    background: var(--card);  
-    border: 1px solid var(--border);  
-    border-radius: 16px;  
-    padding: 24px;  
-  }  
-  
-  .name-card label {  
-    display: block;  
-    font-size: 13px;  
-    color: var(--muted);  
-    margin-bottom: 10px;  
-    letter-spacing: 1px;  
-    text-transform: uppercase;  
-  }  
-  
-  .name-card input {  
-    width: 100%;  
-    background: var(--bg);  
-    border: 2px solid var(--border);  
-    border-radius: 10px;  
-    color: var(--text);  
-    font-size: 20px;  
-    font-family: 'Noto Sans KR', sans-serif;  
-    padding: 14px 16px;  
-    outline: none;  
-    transition: border-color 0.2s;  
-  }  
-  
-  .name-card input:focus {  
-    border-color: var(--accent);  
-  }  
-  
-  .name-card input::placeholder {  
-    color: var(--muted);  
-    font-size: 16px;  
-  }  
-  
-  .btn-start {  
-    background: var(--accent);  
-    color: white;  
-    border: none;  
-    border-radius: 12px;  
-    padding: 18px;  
-    font-size: 18px;  
-    font-family: 'Black Han Sans', sans-serif;  
-    letter-spacing: 1px;  
-    cursor: pointer;  
-    transition: transform 0.1s, background 0.2s;  
-    width: 100%;  
-  }  
-  
-  .btn-start:hover { background: var(--accent2); }  
-  .btn-start:active { transform: scale(0.97); }  
-  
-  /* 자리 선택 화면 */  
-  #seatScreen { display: none; }  
-  
-  .my-name-bar {  
-    background: linear-gradient(135deg, var(--accent), #ea580c);  
-    border-radius: 12px;  
-    padding: 12px 16px;  
-    margin-bottom: 20px;  
-    display: flex;  
-    align-items: center;  
-    gap: 10px;  
-  }  
-  
-  .my-name-bar .emoji { font-size: 20px; }  
-  .my-name-bar .text { font-size: 15px; }  
-  .my-name-bar .text strong { font-size: 18px; }  
-  
-  /* 범례 */  
-  .legend {  
-    display: flex;  
-    gap: 16px;  
-    margin-bottom: 20px;  
-    padding: 12px 16px;  
-    background: var(--card);  
-    border-radius: 10px;  
-    border: 1px solid var(--border);  
-  }  
-  
-  .legend-item {  
-    display: flex;  
-    align-items: center;  
-    gap: 6px;  
-    font-size: 12px;  
-    color: var(--muted);  
-  }  
-  
-  .legend-dot {  
-    width: 12px;  
-    height: 12px;  
-    border-radius: 3px;  
-  }  
-  
-  /* 교탁 */  
-  .blackboard {  
-    background: #1a3a2a;  
-    border: 2px solid #2d6a4f;  
-    border-radius: 8px;  
-    text-align: center;  
-    padding: 10px;  
-    margin-bottom: 12px;  
-    font-size: 13px;  
-    color: #74c69d;  
-    letter-spacing: 3px;  
-    font-weight: 700;  
-  }  
-  
-  .teacher-desk {  
-    background: #2d1b00;  
-    border: 2px solid #92400e;  
-    border-radius: 8px;  
-    text-align: center;  
-    padding: 8px;  
-    margin-bottom: 20px;  
-    font-size: 12px;  
-    color: #d97706;  
-    letter-spacing: 2px;  
-  }  
-  
-  /* 자리 배치 */  
-  .classroom {  
-    display: flex;  
-    flex-direction: column;  
-    gap: 6px;  
-    margin-bottom: 24px;  
-  }  
-  
-  /* 앞자리 (1번) */  
-  .front-seat-row {  
-    display: flex;  
-    justify-content: center;  
-    margin-bottom: 8px;  
-  }  
-  
-  /* 분단 구조 */  
-  .rows-area {  
-    display: flex;  
-    gap: 8px;  
-    justify-content: center;  
-  }  
-  
-  .dan {  
-    display: flex;  
-    flex-direction: column;  
-    gap: 6px;  
-  }  
-  
-  .dan-label {  
-    text-align: center;  
-    font-size: 10px;  
-    color: var(--muted);  
-    letter-spacing: 1px;  
-    margin-bottom: 2px;  
-  }  
-  
-  .seat-pair {  
-    display: flex;  
-    gap: 4px;  
-  }  
-  
-  /* 자리 버튼 */  
-  .seat {  
-    width: 52px;  
-    height: 52px;  
-    border-radius: 10px;  
-    border: 2px solid var(--border);  
-    background: var(--card);  
-    color: var(--text);  
-    font-size: 11px;  
-    font-family: 'Noto Sans KR', sans-serif;  
-    cursor: pointer;  
-    transition: all 0.15s;  
-    display: flex;  
-    flex-direction: column;  
-    align-items: center;  
-    justify-content: center;  
-    gap: 2px;  
-    position: relative;  
-    overflow: hidden;  
-  }  
-  
-  .seat .seat-num {  
-    font-size: 16px;  
-    font-family: 'Black Han Sans', sans-serif;  
-    color: var(--accent);  
-    line-height: 1;  
-  }  
-  
-  .seat .seat-name {  
-    font-size: 9px;  
-    color: var(--muted);  
-    max-width: 48px;  
-    overflow: hidden;  
-    text-overflow: ellipsis;  
-    white-space: nowrap;  
-  }  
-  
-  .seat.available:hover {  
-    border-color: var(--accent);  
-    background: rgba(249,115,22,0.15);  
-    transform: scale(1.05);  
-  }  
-  
-  .seat.available:hover .seat-num {  
-    color: var(--accent2);  
-  }  
-  
-  .seat.taken {  
-    background: var(--taken);  
-    border-color: #2d3748;  
-    cursor: not-allowed;  
-    opacity: 0.6;  
-  }  
-  
-  .seat.taken .seat-num {  
-    color: var(--muted);  
-    font-size: 12px;  
-  }  
-  
-  .seat.mine {  
-    background: linear-gradient(135deg, rgba(249,115,22,0.3), rgba(234,88,12,0.2));  
-    border-color: var(--accent);  
-    cursor: default;  
-  }  
-  
-  .seat.mine .seat-num {  
-    color: var(--accent);  
-  }  
-  
-  /* 앞자리 (특별 자리) */  
-  .seat.front-seat {  
-    width: 60px;  
-    height: 52px;  
-    border-color: #d97706;  
-    background: rgba(217,119,6,0.1);  
-  }  
-  
-  .seat.front-seat .seat-num {  
-    color: #fbbf24;  
-  }  
-  
-  /* 확인 팝업 */  
-  .overlay {  
-    display: none;  
-    position: fixed;  
-    inset: 0;  
-    background: rgba(0,0,0,0.8);  
-    z-index: 100;  
-    align-items: center;  
-    justify-content: center;  
-    padding: 20px;  
-  }  
-  
-  .overlay.show { display: flex; }  
-  
-  .popup {  
-    background: var(--card);  
-    border: 1px solid var(--border);  
-    border-radius: 20px;  
-    padding: 28px 24px;  
-    width: 100%;  
-    max-width: 320px;  
-    text-align: center;  
-    animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);  
-  }  
-  
-  @keyframes popIn {  
-    from { transform: scale(0.8); opacity: 0; }  
-    to { transform: scale(1); opacity: 1; }  
-  }  
-  
-  .popup .emoji-big { font-size: 48px; margin-bottom: 12px; }  
-  .popup h2 { font-family: 'Black Han Sans', sans-serif; font-size: 22px; margin-bottom: 8px; }  
-  .popup p { color: var(--muted); font-size: 14px; margin-bottom: 20px; line-height: 1.6; }  
-  .popup .seat-preview {  
-    background: var(--bg);  
-    border: 2px solid var(--accent);  
-    border-radius: 12px;  
-    padding: 16px;  
-    margin-bottom: 20px;  
-    font-size: 32px;  
-    font-family: 'Black Han Sans', sans-serif;  
-    color: var(--accent);  
-  }  
-  
-  .popup-btns {  
-    display: flex;  
-    gap: 10px;  
-  }  
-  
-  .btn-cancel {  
-    flex: 1;  
-    background: var(--border);  
-    color: var(--muted);  
-    border: none;  
-    border-radius: 10px;  
-    padding: 14px;  
-    font-size: 15px;  
-    font-family: 'Noto Sans KR', sans-serif;  
-    cursor: pointer;  
-  }  
-  
-  .btn-confirm {  
-    flex: 2;  
-    background: var(--accent);  
-    color: white;  
-    border: none;  
-    border-radius: 10px;  
-    padding: 14px;  
-    font-size: 15px;  
-    font-family: 'Black Han Sans', sans-serif;  
-    cursor: pointer;  
-    letter-spacing: 1px;  
-  }  
-  
-  /* 완료 화면 */  
-  #doneScreen {  
-    display: none;  
-    text-align: center;  
-    padding: 40px 20px;  
-  }  
-  
-  #doneScreen .big-emoji { font-size: 80px; margin-bottom: 16px; }  
-  #doneScreen h2 {  
-    font-family: 'Black Han Sans', sans-serif;  
-    font-size: 32px;  
-    color: var(--accent);  
-    margin-bottom: 8px;  
-  }  
-  #doneScreen p { color: var(--muted); font-size: 16px; line-height: 1.7; }  
-  .btn-change {  
-    margin-top: 16px;  
-    background: transparent;  
-    border: 2px solid var(--border);  
-    color: var(--muted);  
-    border-radius: 12px;  
-    padding: 14px 28px;  
-    font-size: 15px;  
-    font-family: 'Noto Sans KR', sans-serif;  
-    cursor: pointer;  
-    transition: border-color 0.2s, color 0.2s;  
-  }  
-  .btn-change:hover { border-color: var(--accent); color: var(--accent); }  
-  #doneScreen .seat-big {  
-    background: var(--card);  
-    border: 3px solid var(--accent);  
-    border-radius: 20px;  
-    padding: 24px;  
-    margin: 24px 0;  
-    font-size: 48px;  
-    font-family: 'Black Han Sans', sans-serif;  
-    color: var(--accent);  
-  }  
-  
-  /* 관리자 버튼 */  
-  .admin-bar {  
-    position: fixed;  
-    bottom: 20px;  
-    right: 16px;  
-    z-index: 50;  
-  }  
-  
-  .btn-admin {  
-    background: var(--card);  
-    border: 1px solid var(--border);  
-    color: var(--muted);  
-    border-radius: 10px;  
-    padding: 8px 14px;  
-    font-size: 12px;  
-    cursor: pointer;  
-  }  
-  
-  /* 관리자 팝업 */  
-  #adminPopup {  
-    display: none;  
-    position: fixed;  
-    inset: 0;  
-    background: rgba(0,0,0,0.9);  
-    z-index: 200;  
-    align-items: center;  
-    justify-content: center;  
-    padding: 20px;  
-  }  
-  #adminPopup.show { display: flex; }  
-  
-  .admin-card {  
-    background: var(--card);  
-    border: 1px solid var(--border);  
-    border-radius: 20px;  
-    padding: 24px;  
-    width: 100%;  
-    max-width: 360px;  
-  }  
-  
-  .admin-card h3 {  
-    font-family: 'Black Han Sans', sans-serif;  
-    font-size: 20px;  
-    margin-bottom: 16px;  
-    color: var(--accent);  
-  }  
-  
-  .seat-list {  
-    display: flex;  
-    flex-direction: column;  
-    gap: 6px;  
-    max-height: 300px;  
-    overflow-y: auto;  
-    margin-bottom: 16px;  
-  }  
-  
-  .seat-list-item {  
-    display: flex;  
-    justify-content: space-between;  
-    align-items: center;  
-    padding: 8px 12px;  
-    background: var(--bg);  
-    border-radius: 8px;  
-    font-size: 13px;  
-  }  
-  
-  .seat-list-item .num { color: var(--accent); font-weight: 700; }  
-  .seat-list-item .name { color: var(--text); }  
-  .seat-list-item .empty { color: var(--muted); }  
-  
-  .btn-start-game {  
-    width: 100%;  
-    background: var(--accent);  
-    color: white;  
-    border: none;  
-    border-radius: 10px;  
-    padding: 14px;  
-    font-size: 16px;  
-    font-family: 'Black Han Sans', sans-serif;  
-    letter-spacing: 1px;  
-    cursor: pointer;  
-    margin-bottom: 8px;  
-  }  
-  .btn-reset {  
-    width: 100%;  
-    background: var(--red);  
-    color: white;  
-    border: none;  
-    border-radius: 10px;  
-    padding: 12px;  
-    font-size: 14px;  
-    font-family: 'Noto Sans KR', sans-serif;  
-    font-weight: 700;  
-    cursor: pointer;  
-    margin-bottom: 8px;  
-  }  
-  
-  .btn-close-admin {  
-    width: 100%;  
-    background: var(--border);  
-    color: var(--muted);  
-    border: none;  
-    border-radius: 10px;  
-    padding: 12px;  
-    font-size: 14px;  
-    font-family: 'Noto Sans KR', sans-serif;  
-    cursor: pointer;  
-  }  
-</style>  
-</head>  
-<body>  
-  
-<div class="container">  
-  
-  <!-- 헤더 -->  
-  <div class="header">  
-    <div class="badge">🔴 LIVE</div>  
-    <h1><span>명당</span>을 차지하라</h1>  
-    <div class="seat-count">남은 자리: <strong id="remainCount">25</strong> / 25</div>  
-  </div>  
-  
-  <!-- 이름 입력 화면 -->  
-  <div id="nameScreen">  
-    <div class="name-card">  
-      <label>내 이름</label>  
-      <input type="text" id="nameInput" placeholder="이름을 입력하세요" maxlength="6" autocomplete="off">  
-    </div>  
-    <button class="btn-start" onclick="goToWait()">준비 완료 →</button>  
-  </div>  
-  
-  
-  <!-- 대기 화면 -->  
-  <div id="waitScreen" style="display:none; text-align:center; padding: 40px 20px;">  
-    <div style="font-size:64px; margin-bottom:16px;">⏳</div>  
-    <h2 style="font-family:'Black Han Sans',sans-serif; font-size:26px; margin-bottom:10px; color:var(--text);">선생님을 기다리는 중</h2>  
-    <p style="color:var(--muted); font-size:14px; margin-bottom:24px;" id="waitName"></p>  
-    <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:8px;" id="waitingList"></div>  
-    <p style="color:var(--muted); font-size:12px; margin-top:16px;">선생님이 시작 버튼을 누르면 자동으로 이동돼요</p>  
-  </div>  
-  
-  <!-- 자리 선택 화면 -->  
-  <div id="seatScreen">  
-    <div class="my-name-bar">  
-      <span class="emoji">👤</span>  
-      <span class="text"><strong id="myNameDisplay"></strong> — 자리를 선택하세요!</span>  
-    </div>  
-  
-    <div class="legend">  
-      <div class="legend-item">  
-        <div class="legend-dot" style="background:#1e293b;border:2px solid #334155"></div>  
-        <span>선택 가능</span>  
-      </div>  
-      <div class="legend-item">  
-        <div class="legend-dot" style="background:#1e293b;opacity:0.4"></div>  
-        <span>선택됨</span>  
-      </div>  
-      <div class="legend-item">  
-        <div class="legend-dot" style="background:rgba(249,115,22,0.3);border:2px solid #f97316"></div>  
-        <span>내 자리</span>  
-      </div>  
-    </div>  
-  
-    <!-- 칠판 & 교탁 -->  
-    <div class="blackboard">칠 판</div>  
-    <div class="teacher-desk">교 탁</div>  
-  
-    <!-- 앞 자리 (1번) -->  
-    <div class="front-seat-row">  
-      <button class="seat front-seat" id="seat-1" onclick="selectSeat(1)">  
-        <span class="seat-num">1</span>  
-        <span class="seat-name" id="name-1"></span>  
-      </button>  
-    </div>  
-  
-    <!-- 분단별 자리 -->  
-    <div class="rows-area" id="mainSeats"></div>  
-  </div>  
-  
-  <!-- 완료 화면 -->  
-  <div id="doneScreen">  
-    <div class="big-emoji">🎉</div>  
-    <h2>자리 확정!</h2>  
-    <div class="seat-big" id="doneSeatNum"></div>  
-    <p id="doneMsg"></p>  
-    <button class="btn-change" onclick="changeSeat()">🔄 자리 바꾸기</button>  
-  </div>  
-  
-</div>  
-  
-<!-- 자리 확인 팝업 -->  
-<div class="overlay" id="confirmOverlay">  
-  <div class="popup">  
-    <div class="emoji-big">🪑</div>  
-    <h2>이 자리 선택?</h2>  
-    <p id="confirmDesc"></p>  
-    <div class="seat-preview" id="confirmSeatNum"></div>  
-    <div class="popup-btns">  
-      <button class="btn-cancel" onclick="closeConfirm()">취소</button>  
-      <button class="btn-confirm" onclick="confirmSeat()">확정!</button>  
-    </div>  
-  </div>  
-</div>  
-  
-<!-- 관리자 버튼 -->  
-<div class="admin-bar">  
-  <button class="btn-admin" onclick="openAdmin()">관리자 👀</button>  
-</div>  
-  
-<!-- 관리자 팝업 -->  
-<div id="adminPopup">  
-  <div class="admin-card">  
-    <h3>🗺️ 현재 자리 현황</h3>  
-    <div class="seat-list" id="adminSeatList"></div>  
-    <button class="btn-start-game" onclick="startGame()">🚀 지금 시작!</button>  
-    <button class="btn-reset" onclick="resetAll()">⚠️ 전체 초기화</button>  
-    <button class="btn-close-admin" onclick="closeAdmin()">닫기</button>  
-  </div>  
-</div>  
-  
-<!-- Firebase SDK -->  
-<script type="module">  
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";  
-  import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";  
-  
-  const firebaseConfig = {  
-    apiKey: "AIzaSyAC-NdaHFqmjd0O8gaPYx0t0CXmrxb7fIA",  
-    authDomain: "seat-picker-49b62.firebaseapp.com",  
-    databaseURL: "https://seat-picker-49b62-default-rtdb.firebaseio.com",  
-    projectId: "seat-picker-49b62",  
-    storageBucket: "seat-picker-49b62.firebasestorage.app",  
-    messagingSenderId: "551374354695",  
-    appId: "1:551374354695:web:a310acb76821c6045d2da2",  
-    measurementId: "G-TFHNJ2QQLB"  
-  };  
-  
-  const app = initializeApp(firebaseConfig);  
-  const db = getDatabase(app);  
-  
-  let myName = '';  
-  let selectedSeat = null;  
-  let seats = {};  
-  
-  let gameStarted = false;  
-  
-  // ─── 실시간 데이터 구독 ──────────────────────────────────────  
-  const seatsRef = ref(db, 'seats');  
-  onValue(seatsRef, (snapshot) => {  
-    seats = snapshot.val() || {};  
-    updateUI();  
-  });  
-  
-  // 게임 상태 구독  
-  const stateRef = ref(db, 'gameState');  
-  onValue(stateRef, (snapshot) => {  
-    const state = snapshot.val();  
-    if (state === 'started' && !gameStarted && myName) {  
-      gameStarted = true;  
-      // 이미 자리가 있으면 완료 화면으로  
-      for (let i = 1; i <= 25; i++) {  
-        if (seats[i] === myName) { showDone(i); return; }  
-      }  
-      document.getElementById('waitScreen').style.display = 'none';  
-      document.getElementById('nameScreen').style.display = 'none';  
-      document.getElementById('seatScreen').style.display = 'block';  
-      document.getElementById('myNameDisplay').textContent = myName;  
-      buildMainSeats();  
-      updateUI();  
-    }  
-  });  
-  
-  // 대기자 목록 구독  
-  const waitingRef = ref(db, 'waiting');  
-  onValue(waitingRef, (snapshot) => {  
-    const waiting = snapshot.val() || {};  
-    const list = document.getElementById('waitingList');  
-    if (!list) return;  
-    list.innerHTML = '';  
-    Object.values(waiting).forEach(name => {  
-      const chip = document.createElement('div');  
-      chip.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--text);';  
-      chip.textContent = name;  
-      list.appendChild(chip);  
-    });  
-  });  
-  
-  // ─── 자리 배치 생성 ──────────────────────────────────────────  
-  function buildMainSeats() {  
-    const container = document.getElementById('mainSeats');  
-    container.innerHTML = '';  
-  
-    const danData = [  
-      { label: '1분단', pairs: [[2,3],[4,5],[6,7],[8,9]] },  
-      { label: '2분단', pairs: [[10,11],[12,13],[14,15],[16,17]] },  
-      { label: '3분단', pairs: [[18,19],[20,21],[22,23],[24,25]] },  
-    ];  
-  
-    danData.forEach(dan => {  
-      const danEl = document.createElement('div');  
-      danEl.className = 'dan';  
-  
-      const label = document.createElement('div');  
-      label.className = 'dan-label';  
-      label.textContent = dan.label;  
-      danEl.appendChild(label);  
-  
-      dan.pairs.forEach(pair => {  
-        const pairEl = document.createElement('div');  
-        pairEl.className = 'seat-pair';  
-  
-        pair.forEach(num => {  
-          const btn = document.createElement('button');  
-          btn.className = 'seat';  
-          btn.id = `seat-${num}`;  
-          btn.innerHTML = `<span class="seat-num">${num}</span><span class="seat-name" id="name-${num}"></span>`;  
-          btn.onclick = () => selectSeat(num);  
-          pairEl.appendChild(btn);  
-        });  
-  
-        danEl.appendChild(pairEl);  
-      });  
-  
-      container.appendChild(danEl);  
-    });  
-  }  
-  
-  // ─── UI 업데이트 ─────────────────────────────────────────────  
-  function updateUI() {  
-    let remain = 0;  
-  
-    for (let i = 1; i <= 25; i++) {  
-      const btn = document.getElementById(`seat-${i}`);  
-      const nameEl = document.getElementById(`name-${i}`);  
-      if (!btn) continue;  
-  
-      btn.className = 'seat' + (i === 1 ? ' front-seat' : '');  
-  
-      if (!seats[i]) {  
-        remain++;  
-        btn.disabled = false;  
-        if (nameEl) nameEl.textContent = '';  
-      } else if (seats[i] === myName) {  
-        btn.classList.add('mine');  
-        btn.disabled = true;  
-        if (nameEl) nameEl.textContent = myName;  
-      } else {  
-        btn.classList.add('taken');  
-        btn.disabled = true;  
-        if (nameEl) nameEl.textContent = seats[i];  
-      }  
-    }  
-  
-    document.getElementById('remainCount').textContent = remain;  
-  }  
-  
-  // ─── 이름 입력 → 자리 화면 ──────────────────────────────────  
-  window.goToWait = async function() {  
-    const input = document.getElementById('nameInput').value.trim();  
-    if (!input) { alert('이름을 입력해주세요!'); return; }  
-    myName = input;  
-  
-    // 이미 자리가 있는지 확인  
-    for (let i = 1; i <= 25; i++) {  
-      if (seats[i] === myName) { showDone(i); return; }  
-    }  
-  
-    // 이미 시작된 경우 바로 자리 선택으로  
-    const stateSnap = await new Promise(resolve => {  
-      const unsub = onValue(ref(db, 'gameState'), snap => { resolve(snap); unsub(); });  
-    });  
-    if (stateSnap.val() === 'started') {  
-      gameStarted = true;  
-      document.getElementById('nameScreen').style.display = 'none';  
-      document.getElementById('seatScreen').style.display = 'block';  
-      document.getElementById('myNameDisplay').textContent = myName;  
-      buildMainSeats();  
-      updateUI();  
-      return;  
-    }  
-  
-    // 대기자 등록  
-    await set(ref(db, 'waiting/' + myName), myName);  
-    document.getElementById('nameScreen').style.display = 'none';  
-    document.getElementById('waitScreen').style.display = 'block';  
-    document.getElementById('waitName').textContent = myName + ' — 준비 완료!';  
-  }  
-  
-  document.getElementById('nameInput').addEventListener('keydown', e => {  
-    if (e.key === 'Enter') window.goToWait();  
-  });  
-  
-  // ─── 자리 선택 팝업 ─────────────────────────────────────────  
-  window.selectSeat = function(num) {  
-    if (seats[num]) return;  
-    selectedSeat = num;  
-  
-    const desc = num === 1 ? '⭐ 교탁 바로 앞 자리예요!' : getSeatDesc(num);  
-    document.getElementById('confirmDesc').textContent = desc;  
-    document.getElementById('confirmSeatNum').textContent = `${num}번 자리`;  
-    document.getElementById('confirmOverlay').classList.add('show');  
-  }  
-  
-  function getSeatDesc(num) {  
-    const danMap = { 1: [2,3,4,5,6,7,8,9], 2: [10,11,12,13,14,15,16,17], 3: [18,19,20,21,22,23,24,25] };  
-    for (const [d, nums] of Object.entries(danMap)) {  
-      const idx = nums.indexOf(num);  
-      if (idx !== -1) return `${d}분단 ${Math.floor(idx/2)+1}번째 줄 자리예요.`;  
-    }  
-    return '';  
-  }  
-  
-  window.closeConfirm = function() {  
-    document.getElementById('confirmOverlay').classList.remove('show');  
-    selectedSeat = null;  
-  }  
-  
-  window.confirmSeat = async function() {  
-    if (!selectedSeat) return;  
-    if (seats[selectedSeat]) {  
-      alert('누군가 방금 선택했어요! 다른 자리를 골라주세요.');  
-      window.closeConfirm();  
-      return;  
-    }  
-    await set(ref(db, `seats/${selectedSeat}`), myName);  
-    window.closeConfirm();  
-    showDone(selectedSeat);  
-  }  
-  
-  // ─── 완료 화면 ───────────────────────────────────────────────  
-  function showDone(num) {  
-    document.getElementById('nameScreen').style.display = 'none';  
-    document.getElementById('seatScreen').style.display = 'none';  
-    document.getElementById('doneScreen').style.display = 'block';  
-    document.getElementById('doneSeatNum').textContent = `${num}번 자리`;  
-    const desc = num === 1 ? '교탁 바로 앞 특별석!' : getSeatDesc(num);  
-    document.getElementById('doneMsg').textContent = `${myName}의 자리가 확정됐어요!\n${desc}`;  
-  }  
-  
-  window.changeSeat = async function() {  
-    if (!myName) return;  
-    // 기존 자리 해제  
-    for (let i = 1; i <= 25; i++) {  
-      if (seats[i] === myName) {  
-        await remove(ref(db, `seats/${i}`));  
-        break;  
-      }  
-    }  
-    document.getElementById('doneScreen').style.display = 'none';  
-    document.getElementById('seatScreen').style.display = 'block';  
-    buildMainSeats();  
-    updateUI();  
-  }  
-  
-  // ─── 게임 시작 ──────────────────────────────────────────────────  
-  window.startGame = async function() {  
-    await set(ref(db, 'gameState'), 'started');  
-    window.closeAdmin();  
-  }  
-  
-  // ─── 관리자 ──────────────────────────────────────────────────  
-  window.openAdmin = function() {  
-    const list = document.getElementById('adminSeatList');  
-    list.innerHTML = '';  
-    for (let i = 1; i <= 25; i++) {  
-      const item = document.createElement('div');  
-      item.className = 'seat-list-item';  
-      item.innerHTML = `<span class="num">${i}번</span>${  
-        seats[i] ? `<span class="name">${seats[i]}</span>` : `<span class="empty">비어있음</span>`  
-      }`;  
-      list.appendChild(item);  
-    }  
-    document.getElementById('adminPopup').classList.add('show');  
-  }  
-  
-  window.closeAdmin = function() {  
-    document.getElementById('adminPopup').classList.remove('show');  
-  }  
-  
-  window.resetAll = async function() {  
-    if (!confirm('정말 전체 초기화할까요?')) return;  
-    await remove(ref(db, 'seats'));  
-    await remove(ref(db, 'waiting'));  
-    await set(ref(db, 'gameState'), 'waiting');  
-    gameStarted = false;  
-    myName = '';  
-    window.closeAdmin();  
-    location.reload();  
-  }  
-</script>  
-</body>  
-</html>  
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>명당을 차지하라</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700&display=swap');
+
+:root {
+–bg: #0a0e1a;
+–card: #111827;
+–border: #1e293b;
+–accent: #f97316;
+–accent2: #fb923c;
+–green: #22c55e;
+–red: #ef4444;
+–text: #f1f5f9;
+–muted: #64748b;
+–taken: #1e293b;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘Noto Sans KR’, sans-serif;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* 배경 그리드 효과 */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+linear-gradient(rgba(249,115,22,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(249,115,22,0.03) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none;
+z-index: 0;
+}
+
+.container {
+position: relative;
+z-index: 1;
+max-width: 480px;
+margin: 0 auto;
+padding: 20px 16px 40px;
+}
+
+/* 헤더 */
+.header {
+text-align: center;
+margin-bottom: 24px;
+}
+
+.header .badge {
+display: inline-block;
+background: var(–accent);
+color: white;
+font-size: 11px;
+font-weight: 700;
+padding: 4px 12px;
+border-radius: 20px;
+letter-spacing: 2px;
+margin-bottom: 8px;
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.7; }
+}
+
+.header h1 {
+font-family: ‘Black Han Sans’, sans-serif;
+font-size: 28px;
+letter-spacing: -1px;
+line-height: 1.1;
+color: var(–text);
+}
+
+.header h1 span {
+color: var(–accent);
+}
+
+.seat-count {
+margin-top: 8px;
+font-size: 13px;
+color: var(–muted);
+}
+
+.seat-count strong {
+color: var(–green);
+}
+
+/* 이름 입력 화면 */
+#nameScreen {
+display: flex;
+flex-direction: column;
+gap: 16px;
+}
+
+.name-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 16px;
+padding: 24px;
+}
+
+.name-card label {
+display: block;
+font-size: 13px;
+color: var(–muted);
+margin-bottom: 10px;
+letter-spacing: 1px;
+text-transform: uppercase;
+}
+
+.name-card input {
+width: 100%;
+background: var(–bg);
+border: 2px solid var(–border);
+border-radius: 10px;
+color: var(–text);
+font-size: 20px;
+font-family: ‘Noto Sans KR’, sans-serif;
+padding: 14px 16px;
+outline: none;
+transition: border-color 0.2s;
+}
+
+.name-card input:focus {
+border-color: var(–accent);
+}
+
+.name-card input::placeholder {
+color: var(–muted);
+font-size: 16px;
+}
+
+.btn-start {
+background: var(–accent);
+color: white;
+border: none;
+border-radius: 12px;
+padding: 18px;
+font-size: 18px;
+font-family: ‘Black Han Sans’, sans-serif;
+letter-spacing: 1px;
+cursor: pointer;
+transition: transform 0.1s, background 0.2s;
+width: 100%;
+}
+
+.btn-start:hover { background: var(–accent2); }
+.btn-start:active { transform: scale(0.97); }
+
+/* 자리 선택 화면 */
+#seatScreen { display: none; }
+
+.my-name-bar {
+background: linear-gradient(135deg, var(–accent), #ea580c);
+border-radius: 12px;
+padding: 12px 16px;
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.my-name-bar .emoji { font-size: 20px; }
+.my-name-bar .text { font-size: 15px; }
+.my-name-bar .text strong { font-size: 18px; }
+
+/* 범례 */
+.legend {
+display: flex;
+gap: 16px;
+margin-bottom: 20px;
+padding: 12px 16px;
+background: var(–card);
+border-radius: 10px;
+border: 1px solid var(–border);
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+gap: 6px;
+font-size: 12px;
+color: var(–muted);
+}
+
+.legend-dot {
+width: 12px;
+height: 12px;
+border-radius: 3px;
+}
+
+/* 교탁 */
+.blackboard {
+background: #1a3a2a;
+border: 2px solid #2d6a4f;
+border-radius: 8px;
+text-align: center;
+padding: 10px;
+margin-bottom: 12px;
+font-size: 13px;
+color: #74c69d;
+letter-spacing: 3px;
+font-weight: 700;
+}
+
+.teacher-desk {
+background: #2d1b00;
+border: 2px solid #92400e;
+border-radius: 8px;
+text-align: center;
+padding: 8px;
+margin-bottom: 20px;
+font-size: 12px;
+color: #d97706;
+letter-spacing: 2px;
+}
+
+/* 자리 배치 */
+.classroom {
+display: flex;
+flex-direction: column;
+gap: 6px;
+margin-bottom: 24px;
+}
+
+/* 앞자리 (1번) */
+.front-seat-row {
+display: flex;
+justify-content: center;
+margin-bottom: 8px;
+}
+
+/* 분단 구조 */
+.rows-area {
+display: flex;
+gap: 8px;
+justify-content: center;
+}
+
+.dan {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.dan-label {
+text-align: center;
+font-size: 10px;
+color: var(–muted);
+letter-spacing: 1px;
+margin-bottom: 2px;
+}
+
+.seat-pair {
+display: flex;
+gap: 4px;
+}
+
+/* 자리 버튼 */
+.seat {
+width: 52px;
+height: 52px;
+border-radius: 10px;
+border: 2px solid var(–border);
+background: var(–card);
+color: var(–text);
+font-size: 11px;
+font-family: ‘Noto Sans KR’, sans-serif;
+cursor: pointer;
+transition: all 0.15s;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 2px;
+position: relative;
+overflow: hidden;
+}
+
+.seat .seat-num {
+font-size: 16px;
+font-family: ‘Black Han Sans’, sans-serif;
+color: var(–accent);
+line-height: 1;
+}
+
+.seat .seat-name {
+font-size: 9px;
+color: var(–muted);
+max-width: 48px;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
+
+.seat.available:hover {
+border-color: var(–accent);
+background: rgba(249,115,22,0.15);
+transform: scale(1.05);
+}
+
+.seat.available:hover .seat-num {
+color: var(–accent2);
+}
+
+.seat.taken {
+background: var(–taken);
+border-color: #2d3748;
+cursor: not-allowed;
+opacity: 0.6;
+}
+
+.seat.taken .seat-num {
+color: var(–muted);
+font-size: 12px;
+}
+
+.seat.mine {
+background: linear-gradient(135deg, rgba(249,115,22,0.3), rgba(234,88,12,0.2));
+border-color: var(–accent);
+cursor: default;
+}
+
+.seat.mine .seat-num {
+color: var(–accent);
+}
+
+/* 앞자리 (특별 자리) */
+.seat.front-seat {
+width: 60px;
+height: 52px;
+border-color: #d97706;
+background: rgba(217,119,6,0.1);
+}
+
+.seat.front-seat .seat-num {
+color: #fbbf24;
+}
+
+/* 확인 팝업 */
+.overlay {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.8);
+z-index: 100;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+
+.overlay.show { display: flex; }
+
+.popup {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 20px;
+padding: 28px 24px;
+width: 100%;
+max-width: 320px;
+text-align: center;
+animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes popIn {
+from { transform: scale(0.8); opacity: 0; }
+to { transform: scale(1); opacity: 1; }
+}
+
+.popup .emoji-big { font-size: 48px; margin-bottom: 12px; }
+.popup h2 { font-family: ‘Black Han Sans’, sans-serif; font-size: 22px; margin-bottom: 8px; }
+.popup p { color: var(–muted); font-size: 14px; margin-bottom: 20px; line-height: 1.6; }
+.popup .seat-preview {
+background: var(–bg);
+border: 2px solid var(–accent);
+border-radius: 12px;
+padding: 16px;
+margin-bottom: 20px;
+font-size: 32px;
+font-family: ‘Black Han Sans’, sans-serif;
+color: var(–accent);
+}
+
+.popup-btns {
+display: flex;
+gap: 10px;
+}
+
+.btn-cancel {
+flex: 1;
+background: var(–border);
+color: var(–muted);
+border: none;
+border-radius: 10px;
+padding: 14px;
+font-size: 15px;
+font-family: ‘Noto Sans KR’, sans-serif;
+cursor: pointer;
+}
+
+.btn-confirm {
+flex: 2;
+background: var(–accent);
+color: white;
+border: none;
+border-radius: 10px;
+padding: 14px;
+font-size: 15px;
+font-family: ‘Black Han Sans’, sans-serif;
+cursor: pointer;
+letter-spacing: 1px;
+}
+
+/* 완료 화면 */
+#doneScreen {
+display: none;
+text-align: center;
+padding: 40px 20px;
+}
+
+#doneScreen .big-emoji { font-size: 80px; margin-bottom: 16px; }
+#doneScreen h2 {
+font-family: ‘Black Han Sans’, sans-serif;
+font-size: 32px;
+color: var(–accent);
+margin-bottom: 8px;
+}
+#doneScreen p { color: var(–muted); font-size: 16px; line-height: 1.7; }
+.btn-change {
+margin-top: 16px;
+background: transparent;
+border: 2px solid var(–border);
+color: var(–muted);
+border-radius: 12px;
+padding: 14px 28px;
+font-size: 15px;
+font-family: ‘Noto Sans KR’, sans-serif;
+cursor: pointer;
+transition: border-color 0.2s, color 0.2s;
+}
+.btn-change:hover { border-color: var(–accent); color: var(–accent); }
+#doneScreen .seat-big {
+background: var(–card);
+border: 3px solid var(–accent);
+border-radius: 20px;
+padding: 24px;
+margin: 24px 0;
+font-size: 48px;
+font-family: ‘Black Han Sans’, sans-serif;
+color: var(–accent);
+}
+
+/* 관리자 버튼 */
+.admin-bar {
+position: fixed;
+bottom: 20px;
+right: 16px;
+z-index: 50;
+}
+
+.btn-admin {
+background: var(–card);
+border: 1px solid var(–border);
+color: var(–muted);
+border-radius: 10px;
+padding: 8px 14px;
+font-size: 12px;
+cursor: pointer;
+}
+
+/* 관리자 팝업 */
+#adminPopup {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.9);
+z-index: 200;
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+#adminPopup.show { display: flex; }
+
+.admin-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 20px;
+padding: 24px;
+width: 100%;
+max-width: 360px;
+}
+
+.admin-card h3 {
+font-family: ‘Black Han Sans’, sans-serif;
+font-size: 20px;
+margin-bottom: 16px;
+color: var(–accent);
+}
+
+.seat-list {
+display: flex;
+flex-direction: column;
+gap: 6px;
+max-height: 300px;
+overflow-y: auto;
+margin-bottom: 16px;
+}
+
+.seat-list-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 8px 12px;
+background: var(–bg);
+border-radius: 8px;
+font-size: 13px;
+}
+
+.seat-list-item .num { color: var(–accent); font-weight: 700; }
+.seat-list-item .name { color: var(–text); }
+.seat-list-item .empty { color: var(–muted); }
+
+.btn-start-game {
+width: 100%;
+background: var(–accent);
+color: white;
+border: none;
+border-radius: 10px;
+padding: 14px;
+font-size: 16px;
+font-family: ‘Black Han Sans’, sans-serif;
+letter-spacing: 1px;
+cursor: pointer;
+margin-bottom: 8px;
+}
+.btn-reset {
+width: 100%;
+background: var(–red);
+color: white;
+border: none;
+border-radius: 10px;
+padding: 12px;
+font-size: 14px;
+font-family: ‘Noto Sans KR’, sans-serif;
+font-weight: 700;
+cursor: pointer;
+margin-bottom: 8px;
+}
+
+.btn-close-admin {
+width: 100%;
+background: var(–border);
+color: var(–muted);
+border: none;
+border-radius: 10px;
+padding: 12px;
+font-size: 14px;
+font-family: ‘Noto Sans KR’, sans-serif;
+cursor: pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+  <!-- 헤더 -->
+
+  <div class="header">
+    <div class="badge">🔴 LIVE</div>
+    <h1><span>명당</span>을 차지하라</h1>
+    <div class="seat-count">남은 자리: <strong id="remainCount">25</strong> / 25</div>
+  </div>
+
+  <!-- 이름 입력 화면 -->
+
+  <div id="nameScreen">
+    <div class="name-card">
+      <label>내 이름</label>
+      <input type="text" id="nameInput" placeholder="이름을 입력하세요" maxlength="6" autocomplete="off">
+    </div>
+    <button class="btn-start" onclick="goToWait()">준비 완료 →</button>
+  </div>
+
+  <!-- 대기 화면 -->
+
+  <div id="waitScreen" style="display:none; text-align:center; padding: 40px 20px;">
+    <div style="font-size:64px; margin-bottom:16px;">⏳</div>
+    <h2 style="font-family:'Black Han Sans',sans-serif; font-size:26px; margin-bottom:10px; color:var(--text);">선생님을 기다리는 중</h2>
+    <p style="color:var(--muted); font-size:14px; margin-bottom:24px;" id="waitName"></p>
+    <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:8px;" id="waitingList"></div>
+    <p style="color:var(--muted); font-size:12px; margin-top:16px;">선생님이 시작 버튼을 누르면 자동으로 이동돼요</p>
+  </div>
+
+  <!-- 자리 선택 화면 -->
+
+  <div id="seatScreen">
+    <div class="my-name-bar">
+      <span class="emoji">👤</span>
+      <span class="text"><strong id="myNameDisplay"></strong> — 자리를 선택하세요!</span>
+    </div>
+
+```
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#1e293b;border:2px solid #334155"></div>
+    <span>선택 가능</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:#1e293b;opacity:0.4"></div>
+    <span>선택됨</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot" style="background:rgba(249,115,22,0.3);border:2px solid #f97316"></div>
+    <span>내 자리</span>
+  </div>
+</div>
+
+<!-- 칠판 & 교탁 -->
+<div class="blackboard">칠 판</div>
+<div class="teacher-desk">교 탁</div>
+
+<!-- 앞 자리 (1번) -->
+<div class="front-seat-row">
+  <button class="seat front-seat" id="seat-1" onclick="selectSeat(1)">
+    <span class="seat-num">1</span>
+    <span class="seat-name" id="name-1"></span>
+  </button>
+</div>
+
+<!-- 분단별 자리 -->
+<div class="rows-area" id="mainSeats"></div>
+```
+
+  </div>
+
+  <!-- 완료 화면 -->
+
+  <div id="doneScreen">
+    <div class="big-emoji">🎉</div>
+    <h2>자리 확정!</h2>
+    <div class="seat-big" id="doneSeatNum"></div>
+    <p id="doneMsg"></p>
+    <button class="btn-change" onclick="changeSeat()">🔄 자리 바꾸기</button>
+  </div>
+
+</div>
+
+<!-- 자리 확인 팝업 -->
+
+<div class="overlay" id="confirmOverlay">
+  <div class="popup">
+    <div class="emoji-big">🪑</div>
+    <h2>이 자리 선택?</h2>
+    <p id="confirmDesc"></p>
+    <div class="seat-preview" id="confirmSeatNum"></div>
+    <div class="popup-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">취소</button>
+      <button class="btn-confirm" onclick="confirmSeat()">확정!</button>
+    </div>
+  </div>
+</div>
+
+<!-- 관리자 버튼 -->
+
+<div class="admin-bar">
+  <button class="btn-admin" onclick="openAdmin()">관리자 👀</button>
+</div>
+
+<!-- 관리자 팝업 -->
+
+<div id="adminPopup">
+  <div class="admin-card">
+    <h3>🗺️ 현재 자리 현황</h3>
+    <div class="seat-list" id="adminSeatList"></div>
+    <button class="btn-start-game" onclick="startGame()">🚀 지금 시작!</button>
+    <button class="btn-reset" onclick="resetAll()">⚠️ 전체 초기화</button>
+    <button class="btn-close-admin" onclick="closeAdmin()">닫기</button>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAC-NdaHFqmjd0O8gaPYx0t0CXmrxb7fIA",
+    authDomain: "seat-picker-49b62.firebaseapp.com",
+    databaseURL: "https://seat-picker-49b62-default-rtdb.firebaseio.com",
+    projectId: "seat-picker-49b62",
+    storageBucket: "seat-picker-49b62.firebasestorage.app",
+    messagingSenderId: "551374354695",
+    appId: "1:551374354695:web:a310acb76821c6045d2da2",
+    measurementId: "G-TFHNJ2QQLB"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  let myName = '';
+  let selectedSeat = null;
+  let seats = {};
+
+  let gameStarted = false;
+
+  // ─── 실시간 데이터 구독 ──────────────────────────────────────
+  const seatsRef = ref(db, 'seats');
+  onValue(seatsRef, (snapshot) => {
+    seats = snapshot.val() || {};
+    updateUI();
+  });
+
+  // 게임 상태 구독
+  const stateRef = ref(db, 'gameState');
+  onValue(stateRef, (snapshot) => {
+    const state = snapshot.val();
+    if (state === 'started' && !gameStarted && myName) {
+      gameStarted = true;
+      // 이미 자리가 있으면 완료 화면으로
+      for (let i = 1; i <= 25; i++) {
+        if (seats[i] === myName) { showDone(i); return; }
+      }
+      document.getElementById('waitScreen').style.display = 'none';
+      document.getElementById('nameScreen').style.display = 'none';
+      document.getElementById('seatScreen').style.display = 'block';
+      document.getElementById('myNameDisplay').textContent = myName;
+      buildMainSeats();
+      updateUI();
+    }
+  });
+
+  // 대기자 목록 구독
+  const waitingRef = ref(db, 'waiting');
+  onValue(waitingRef, (snapshot) => {
+    const waiting = snapshot.val() || {};
+    const list = document.getElementById('waitingList');
+    if (!list) return;
+    list.innerHTML = '';
+    Object.values(waiting).forEach(name => {
+      const chip = document.createElement('div');
+      chip.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--text);';
+      chip.textContent = name;
+      list.appendChild(chip);
+    });
+  });
+
+  // ─── 자리 배치 생성 ──────────────────────────────────────────
+  function buildMainSeats() {
+    const container = document.getElementById('mainSeats');
+    container.innerHTML = '';
+
+    const danData = [
+      { label: '1분단', pairs: [[2,3],[4,5],[6,7],[8,9]] },
+      { label: '2분단', pairs: [[10,11],[12,13],[14,15],[16,17]] },
+      { label: '3분단', pairs: [[18,19],[20,21],[22,23],[24,25]] },
+    ];
+
+    danData.forEach(dan => {
+      const danEl = document.createElement('div');
+      danEl.className = 'dan';
+
+      const label = document.createElement('div');
+      label.className = 'dan-label';
+      label.textContent = dan.label;
+      danEl.appendChild(label);
+
+      dan.pairs.forEach(pair => {
+        const pairEl = document.createElement('div');
+        pairEl.className = 'seat-pair';
+
+        pair.forEach(num => {
+          const btn = document.createElement('button');
+          btn.className = 'seat';
+          btn.id = `seat-${num}`;
+          btn.innerHTML = `<span class="seat-num">${num}</span><span class="seat-name" id="name-${num}"></span>`;
+          btn.onclick = () => selectSeat(num);
+          pairEl.appendChild(btn);
+        });
+
+        danEl.appendChild(pairEl);
+      });
+
+      container.appendChild(danEl);
+    });
+  }
+
+  // ─── UI 업데이트 ─────────────────────────────────────────────
+  function updateUI() {
+    // 남은 자리는 seats 객체 기준으로 직접 계산
+    const takenCount = Object.keys(seats).filter(k => seats[k]).length;
+    const remain = 25 - takenCount;
+    document.getElementById('remainCount').textContent = remain;
+
+    for (let i = 1; i <= 25; i++) {
+      const btn = document.getElementById(`seat-${i}`);
+      const nameEl = document.getElementById(`name-${i}`);
+      if (!btn) continue;
+
+      btn.className = 'seat' + (i === 1 ? ' front-seat' : '');
+
+      if (!seats[i]) {
+        btn.disabled = false;
+        if (nameEl) nameEl.textContent = '';
+      } else if (seats[i] === myName) {
+        btn.classList.add('mine');
+        btn.disabled = true;
+        if (nameEl) nameEl.textContent = myName;
+      } else {
+        btn.classList.add('taken');
+        btn.disabled = true;
+        if (nameEl) nameEl.textContent = seats[i];
+      }
+    }
+  }
+
+  // ─── 이름 입력 → 자리 화면 ──────────────────────────────────
+  window.goToWait = async function() {
+    const input = document.getElementById('nameInput').value.trim();
+    if (!input) { alert('이름을 입력해주세요!'); return; }
+    myName = input;
+
+    // 이미 자리가 있는지 확인
+    for (let i = 1; i <= 25; i++) {
+      if (seats[i] === myName) { showDone(i); return; }
+    }
+
+    // 이미 시작된 경우 바로 자리 선택으로
+    const stateSnap = await new Promise(resolve => {
+      const unsub = onValue(ref(db, 'gameState'), snap => { resolve(snap); unsub(); });
+    });
+    if (stateSnap.val() === 'started') {
+      gameStarted = true;
+      document.getElementById('nameScreen').style.display = 'none';
+      document.getElementById('seatScreen').style.display = 'block';
+      document.getElementById('myNameDisplay').textContent = myName;
+      buildMainSeats();
+      updateUI();
+      return;
+    }
+
+    // 대기자 등록
+    await set(ref(db, 'waiting/' + myName), myName);
+    document.getElementById('nameScreen').style.display = 'none';
+    document.getElementById('waitScreen').style.display = 'block';
+    document.getElementById('waitName').textContent = myName + ' — 준비 완료!';
+  }
+
+  document.getElementById('nameInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') window.goToWait();
+  });
+
+  // ─── 자리 선택 팝업 ─────────────────────────────────────────
+  window.selectSeat = function(num) {
+    if (seats[num]) return;
+    selectedSeat = num;
+
+    const desc = num === 1 ? '⭐ 교탁 바로 앞 자리예요!' : getSeatDesc(num);
+    document.getElementById('confirmDesc').textContent = desc;
+    document.getElementById('confirmSeatNum').textContent = `${num}번 자리`;
+    document.getElementById('confirmOverlay').classList.add('show');
+  }
+
+  function getSeatDesc(num) {
+    const danMap = { 1: [2,3,4,5,6,7,8,9], 2: [10,11,12,13,14,15,16,17], 3: [18,19,20,21,22,23,24,25] };
+    for (const [d, nums] of Object.entries(danMap)) {
+      const idx = nums.indexOf(num);
+      if (idx !== -1) return `${d}분단 ${Math.floor(idx/2)+1}번째 줄 자리예요.`;
+    }
+    return '';
+  }
+
+  window.closeConfirm = function() {
+    document.getElementById('confirmOverlay').classList.remove('show');
+    selectedSeat = null;
+  }
+
+  window.confirmSeat = async function() {
+    if (!selectedSeat) return;
+    if (seats[selectedSeat]) {
+      alert('누군가 방금 선택했어요! 다른 자리를 골라주세요.');
+      window.closeConfirm();
+      return;
+    }
+    await set(ref(db, `seats/${selectedSeat}`), myName);
+    window.closeConfirm();
+    showDone(selectedSeat);
+  }
+
+  // ─── 완료 화면 ───────────────────────────────────────────────
+  function showDone(num) {
+    document.getElementById('nameScreen').style.display = 'none';
+    document.getElementById('seatScreen').style.display = 'none';
+    document.getElementById('doneScreen').style.display = 'block';
+    document.getElementById('doneSeatNum').textContent = `${num}번 자리`;
+    const desc = num === 1 ? '교탁 바로 앞 특별석!' : getSeatDesc(num);
+    document.getElementById('doneMsg').textContent = `${myName}의 자리가 확정됐어요!\n${desc}`;
+  }
+
+  window.changeSeat = async function() {
+    if (!myName) return;
+    // 기존 자리 해제
+    for (let i = 1; i <= 25; i++) {
+      if (seats[i] === myName) {
+        await remove(ref(db, `seats/${i}`));
+        break;
+      }
+    }
+    document.getElementById('doneScreen').style.display = 'none';
+    document.getElementById('seatScreen').style.display = 'block';
+    buildMainSeats();
+    updateUI();
+  }
+
+  // ─── 게임 시작 ──────────────────────────────────────────────────
+  window.startGame = async function() {
+    await set(ref(db, 'gameState'), 'started');
+    window.closeAdmin();
+  }
+
+  // ─── 관리자 ──────────────────────────────────────────────────
+  window.openAdmin = function() {
+    const list = document.getElementById('adminSeatList');
+    list.innerHTML = '';
+    for (let i = 1; i <= 25; i++) {
+      const item = document.createElement('div');
+      item.className = 'seat-list-item';
+      item.innerHTML = `<span class="num">${i}번</span>${
+        seats[i] ? `<span class="name">${seats[i]}</span>` : `<span class="empty">비어있음</span>`
+      }`;
+      list.appendChild(item);
+    }
+    document.getElementById('adminPopup').classList.add('show');
+  }
+
+  window.closeAdmin = function() {
+    document.getElementById('adminPopup').classList.remove('show');
+  }
+
+  window.resetAll = async function() {
+    if (!confirm('정말 전체 초기화할까요?')) return;
+    await remove(ref(db, 'seats'));
+    await remove(ref(db, 'waiting'));
+    await set(ref(db, 'gameState'), 'waiting');
+    gameStarted = false;
+    myName = '';
+    window.closeAdmin();
+    location.reload();
+  }
+</script>
+
+</body>
+</html>
