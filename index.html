@@ -3,6 +3,9 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>명당을 차지하라</title>
 <style>
@@ -24,8 +27,8 @@
 - { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-background: var(–bg);
-color: var(–text);
+background: #0a0e1a;
+color: #f1f5f9;
 font-family: ‘Noto Sans KR’, sans-serif;
 min-height: 100vh;
 overflow-x: hidden;
@@ -574,7 +577,7 @@ cursor: pointer;
 </style>
 
 </head>
-<body>
+<body style="background:#0a0e1a; color:#f1f5f9;">
 
 <div class="container">
 
@@ -891,13 +894,13 @@ cursor: pointer;
   }
 
   window.confirmSeat = async function() {
-    if (!selectedSeat) return;
+    if (!selectedSeat || isNaN(selectedSeat)) return;
     if (seats[selectedSeat]) {
       alert('누군가 방금 선택했어요! 다른 자리를 골라주세요.');
       window.closeConfirm();
       return;
     }
-    await set(ref(db, `seats/${selectedSeat}`), myName);
+    await set(ref(db, `seats/${parseInt(selectedSeat)}`), myName);
     window.closeConfirm();
     showDone(selectedSeat);
   }
